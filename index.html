@@ -948,7 +948,74 @@ function renderComparacion() {
         <div class="comp-bar-wrap"><div class="comp-bar-bg"><div class="comp-bar-fill" style="width:${pPrev}%;background:var(--s4);"></div></div><div class="comp-val" style="color:var(--muted);">${fmts(vPrev)}</div></div>
       </div>${diffStr}</div>`;}).join('');
 }
+// ── MODAL EDITAR INGRESOS ─────────────────────────────────────
+let editIngresoCtx = null;
 
+function openEditIngreso(type, id) {
+  editIngresoCtx = {type, id};
+  const d = getData(cur);
+  document.getElementById('modalIngresoExtraFields').style.display = 'none';
+  document.getElementById('modalIngresoTransferFields').style.display = 'none';
+
+  if (type === 'sueldo') {
+    document.getElementById('modalIngresoTitle').textContent = 'Editar Sueldo';
+    const s = d.sueldo;
+    document.getElementById('modalIngresoAmt').value = typeof s === 'object' ? s.amt : s;
+    document.getElementById('modalIngresoDate').value = typeof s === 'object' ? s.date||'' : '';
+  } else if (type === 'rend') {
+    document.getElementById('modalIngresoTitle').textContent = 'Editar Rendimiento';
+    const r = d.rendimientos.find(x=>x.id===id);
+    document.getElementById('modalIngresoAmt').value = r.amt;
+    document.getElementById('modalIngresoDate').value = r.date||'';
+  } else if (type === 'transfer') {
+    document.getElementById('modalIngresoTitle').textContent = 'Editar Transferencia';
+    const t = d.transferencias.find(x=>x.id===id);
+    document.getElementById('modalIngresoAmt').value = t.amt;
+    document.getElementById('modalIngresoDate').value = t.date||'';
+    document.getElementById('modalIngresoTransferFields').style.display = 'block';
+    document.getElementById('modalIngresoDir').value = t.dir;
+  } else if (type === 'extra') {
+    document.getElementById('modalIngresoTitle').textContent = 'Editar Ingreso Extra';
+    const e = d.extras.find(x=>x.id===id);
+    document.getElementById('modalIngresoAmt').value = e.amt;
+    document.getElementById('modalIngresoDate').value = e.date||'';
+    document.getElementById('modalIngresoExtraFields').style.display = 'block';
+    document.getElementById('modalIngresoName').value = e.name;
+    document.getElementById('modalIngresoWallet').value = e.wallet||'mp';
+  }
+  document.getElementById('modalIngresoBg').classList.add('open');
+}
+
+function closeModalIngreso() {
+  document.getElementById('modalIngresoBg').classList.remove('open');
+  editIngresoCtx = null;
+}
+
+function confirmEditIngreso() {
+  if (!editIngresoCtx) return;
+  const d = getData(cur);
+  const amt = parseFloat(document.getElementById('modalIngresoAmt').value);
+  const date = document.getElementById('modalIngresoDate').value;
+  const {type, id} = editIngresoCtx;
+
+  if (type === 'sueldo') {
+    d.sueldo = {amt, date};
+  } else if (type === 'rend') {
+    const r = d.rendimientos.find(x=>x.id===id);
+    if (r) { r.amt=amt; r.date=date; }
+  } else if (type === 'transfer') {
+    const t = d.transferencias.find(x=>x.id===id);
+    if (t) { t.amt=amt; t.date=date; t.dir=document.getElementById('modalIngresoDir').value; }
+  } else if (type === 'extra') {
+    const e = d.extras.find(x=>x.id===id);
+    if (e) { e.amt=amt; e.date=date; e.name=document.getElementById('modalIngresoName').value; e.wallet=document.getElementById('modalIngresoWallet').value; }
+  }
+  save(); renderAll(); closeModalIngreso();
+}
+
+document.getElementById('modalIngresoBg').addEventListener('click', e=>{
+  if(e.target===e.currentTarget) closeModalIngreso();
+});
 // ── INIT ──────────────────────────────────────────────────────
 initSelects();
 updateDirUI();

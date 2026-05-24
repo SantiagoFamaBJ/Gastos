@@ -838,10 +838,15 @@ function renderCol(col, listId, badgeId, amtCls) {
       // Separador de día
       const label = date ? `${date.slice(8,10)}/${date.slice(5,7)}` : 'Sin fecha';
       const dayTotal = sorted.filter(x=>(x.date||'')=== date).reduce((a,x)=>a+x.amt,0);
-      html += `<div style="display:flex;align-items:center;justify-content:space-between;
+const colTotal = items.reduce((a,x)=>a+x.amt,0);
+const colGastadoHastaAca = sorted.filter(x=>(x.date||'')>=date).reduce((a,x)=>a+x.amt,0);
+const colRestante = colTotal - colGastadoHastaAca;
+html += `<div style="display:flex;align-items:center;justify-content:space-between;
         padding:5px 8px;margin:4px 0 2px;background:var(--s2);border-radius:var(--rsm);">
         <span style="font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:.05em;">${label}</span>
-        <span style="font-family:var(--mono);font-size:10px;color:var(--muted);">${fmts(dayTotal)}</span>
+        <span style="font-family:var(--mono);font-size:10px;color:var(--muted);">
+          Gastado: ${fmts(dayTotal)} | Restante: ${fmts(colRestante)}
+        </span>
       </div>`;
       lastDate = date;
     }

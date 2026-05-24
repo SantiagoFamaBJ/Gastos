@@ -667,18 +667,24 @@ function addGasto(col) {
   amtEl.value=''; dChk.checked=false; amtEl.focus();
 }
 function delGasto(col,id) { getData(cur)[col]=getData(cur)[col].filter(x=>x.id!==id); save(); renderAll(); }
-function addRend() {
+function addRend(){
   const v=parseFloat(document.getElementById('rendInput').value);
-  if (!v||v<=0) return;
-  getData(cur).rendimientos.push({id:Date.now(),amt:v});
-  save(); renderAll(); document.getElementById('rendInput').value='';
+  const date=document.getElementById('rendDate').value||today();
+  if(!v||v<=0)return;
+  getData(cur).rendimientos.push({id:Date.now(),amt:v,date});
+  save();renderAll();
+  document.getElementById('rendInput').value='';
+  document.getElementById('rendDate').value='';
 }
 function delRend(id) { getData(cur).rendimientos=getData(cur).rendimientos.filter(x=>x.id!==id); save(); renderAll(); }
-function addTransfer() {
+function addTransfer(){
   const v=parseFloat(document.getElementById('transferAmt').value);
-  if (!v||v<=0) return;
-  getData(cur).transferencias.push({id:Date.now(),amt:v,dir:tDir});
-  save(); renderAll(); document.getElementById('transferAmt').value='';
+  const date=document.getElementById('transferDate').value||today();
+  if(!v||v<=0)return;
+  getData(cur).transferencias.push({id:Date.now(),amt:v,dir:tDir,date});
+  save();renderAll();
+  document.getElementById('transferAmt').value='';
+  document.getElementById('transferDate').value='';
 }
 function delTransfer(id) { getData(cur).transferencias=getData(cur).transferencias.filter(x=>x.id!==id); save(); renderAll(); }
 function setSueldo() {
@@ -686,10 +692,14 @@ function setSueldo() {
   if (!v||v<=0) return;
   getData(cur).sueldo=v; save(); renderAll(); document.getElementById('sueldoInput').value='';
 }
-function setBalMP() {
-  const v=parseFloat(document.getElementById('balMPinput').value);
-  if (isNaN(v)) return;
-  getData(cur).balMP=v; save(); renderAll(); document.getElementById('balMPinput').value='';
+function setSueldo(){
+  const v=parseFloat(document.getElementById('sueldoInput').value);
+  const date=document.getElementById('sueldoDate').value||today();
+  if(!v||v<=0)return;
+  getData(cur).sueldo={amt:v,date};
+  save();renderAll();
+  document.getElementById('sueldoInput').value='';
+  document.getElementById('sueldoDate').value='';
 }
 function setBalEF() {
   const v=parseFloat(document.getElementById('balEFinput').value);
@@ -697,14 +707,17 @@ function setBalEF() {
   getData(cur).balEF=v; save(); renderAll(); document.getElementById('balEFinput').value='';
 }
 function toggleDiegoPagado() { getData(cur).diegoPagado=!getData(cur).diegoPagado; save(); renderAll(); }
-function addExtra() {
+function addExtra(){
   const name=document.getElementById('extraName').value.trim();
   const amt=parseFloat(document.getElementById('extraAmt').value);
   const wallet=document.getElementById('extraWallet').value;
-  if (!name||!amt||amt<=0) return;
-  getData(cur).extras.push({id:Date.now(),name,amt,wallet});
-  save(); renderAll();
-  document.getElementById('extraName').value=''; document.getElementById('extraAmt').value='';
+  const date=document.getElementById('extraDate').value||today();
+  if(!name||!amt||amt<=0)return;
+  getData(cur).extras.push({id:Date.now(),name,amt,wallet,date});
+  save();renderAll();
+  document.getElementById('extraName').value='';
+  document.getElementById('extraAmt').value='';
+  document.getElementById('extraDate').value='';
 }
 function delExtra(id) { getData(cur).extras=getData(cur).extras.filter(x=>x.id!==id); save(); renderAll(); }
 function addSusc() {

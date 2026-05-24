@@ -799,44 +799,89 @@ function renderAll(){
 }
 
 function renderCol(col,listId,badgeId,amtCls,saldoActual){
-  const items=getData(cur)[col];
+  const d=getData(cur);
+  const items=d[col];
   const total=items.reduce((a,x)=>a+x.amt,0);
   document.getElementById(badgeId).textContent=fmts(total);
   const el=document.getElementById(listId);
-  if(!items.length){el.innerHTML=`<div class="col-empty">Sin movimientos. Agregá uno ↓</div>`;return;}
-  const sorted=[...items].sort((a,b)=>(b.date||'').localeCompare(a.date||''));
-  const uniqueDates=[...new Set(sorted.map(i=>i.date||''))];
+
+  // Armar todos los movimientos del bolsillo
+  const movs=[];
+
+  // Gastos (egresos)
+  items.forEach(i=>movs.push({date:i.date||'',label:i.cat,amt:-i.amt,diego:i.diego,id:i.id,tipo:'gasto'}));
+
+  if(col==='mp'){
+    // Sueldo
+    const s=getSueldo(d);
+    if(s.amt>0&&s.date) movs.push({date:s.date,label:'Sueldo',amt:s.amt,tipo:'ingreso'});
+    // Rendimientos
+    d.rendimientos.forEach(r=>movs.push({date:r.date||'',label:'Rendimiento',amt:r.amt,tipo:'ingreso'}));
+    // Extras MP
+    d.extras.filter(x=>x.wallet==='mp'||!x.wallet).forEach(x=>movs.push({date:x.date||'',label:x.name,amt:x.amt,tipo:'ingreso'}));
+    // Transferencias
+    d.transferencias.forEach(t=>{
+      if(t.dir==='mp_to_ef') movs.push({date:t.date||'',label:'Transfer → EF',amt:-t.amt,tipo:'egreso'});
+      else movs.push({date:t.date||'',label:'Transfer ← EF',amt:t.amt,tipo:'ingreso'});
+    });
+  } else if(col==='ef'){
+    // Extras EF
+    d.extras.filter(x=>x.wallet==='ef').forEach(x=>movs.push({date:x.date||'',label:x.name,amt:x.amt,tipo:'ingreso'}));
+    // Transferencias
+    d.transferencias.forEach(t=>{
+      if(t.dir==='ef_to_mp') movs.push({date:t.date||'',label:'Transfer → MP',amt:-t.amt,tipo:'egreso'});
+      else movs.push({date:t.date||'',label:'Transfer ← MP',amt:t.amt,tipo:'ingreso'});
+    });
+  }
+
+  // Ordenar por fecha desc
+  movs.sort((a,b)=>b.date.localeCompare(a.date));
+
+  if(!movs.length){el.innerHTML=`<div class="col-empty">Sin movimientos. Agregá uno ↓</div>`;return;}
+
+  const uniqueDates=[...new Set(movs.map(m=>m.date))];
   let html='';
-  let gastadoAcum=0;
+  let acum=0;
+
   uniqueDates.forEach(date=>{
-    const itemsDelDia=sorted.filter(i=>(i.date||'')===date);
-    const dayTotal=itemsDelDia.reduce((a,x)=>a+x.amt,0);
+    const delDia=movs.filter(m=>m.date===date);
+    const dayNet=delDia.reduce((a,m)=>a+m.amt,0);
     const label=date?`${date.slice(8,10)}/${date.slice(5,7)}`:'Sin fecha';
-    const saldoEseDia=saldoActual+gastadoAcum;
+    const saldoEseDia=saldoActual+acum;
+
     html+=`<div style="display:flex;align-items:center;justify-content:space-between;
       padding:5px 8px;margin:4px 0 2px;background:var(--s2);border-radius:var(--rsm);">
-      <span style="font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:.05em;">${label}</span>
+      <span style="font-family:var(--mono);font-size:10px;color:var(--muted);">${label}</span>
       <span style="font-family:var(--mono);font-size:10px;color:var(--muted);">
-        Gastado: ${fmts(dayTotal)} &nbsp;|&nbsp; Saldo: <span style="color:var(--green)">${fmts(saldoEseDia)}</span>
+        Saldo: <span style="color:var(--green)">${fmts(saldoEseDia)}</span>
       </span>
     </div>`;
-    itemsDelDia.forEach(i=>{
+
+    delDia.forEach(m=>{
+      const isIngreso=m.amt>0;
+      const color=isIngreso?'var(--green)':'var(--red)';
+      const prefix=isIngreso?'+':'-';
+      const monto=Math.abs(m.amt);
+      const diegoPip=m.diego?'<div class="pip">💳 Diego</div>':'';
+      const editBtn=m.tipo==='gasto'
+        ?`<button class="iact edit" onclick="openEdit('${col}',${m.id})">✎</button><button class="iact del" onclick="delGasto('${col}',${m.id})">✕</button>`
+        :'';
       html+=`<div class="irow">
         ${date?`<div class="idate">${date.slice(5).replace('-','/')}</div>`:''}
-        <div class="icat">${esc(i.cat)}</div>
-        ${i.diego?'<div class="pip">💳 Diego</div>':''}
-        <div class="iamt ${amtCls}">${fmt(i.amt)}</div>
-        <div class="iactions">
-          <button class="iact edit" onclick="openEdit('${col}',${i.id})">✎</button>
-          <button class="iact del" onclick="delGasto('${col}',${i.id})">✕</button>
-        </div>
+        <div class="icat">${esc(m.label)}</div>
+        ${diegoPip}
+        <div class="iamt" style="color:${color}">${prefix}${fmt(monto)}</div>
+        <div class="iactions">${editBtn}</div>
       </div>`;
     });
-    gastadoAcum+=dayTotal;
+
+    // Acumular gastos para calcular saldo hacia atrás
+    const gastosDelDia=delDia.filter(m=>m.amt<0).reduce((a,m)=>a+Math.abs(m.amt),0);
+    acum+=gastosDelDia;
   });
+
   el.innerHTML=html;
 }
-
 function renderChart(d){
   const totals={};[...d.mp,...d.ef].forEach(x=>{totals[x.cat]=(totals[x.cat]||0)+x.amt;});
   const entries=Object.entries(totals).sort((a,b)=>b[1]-a[1]);

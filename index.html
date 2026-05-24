@@ -469,6 +469,29 @@ header{display:flex;align-items:center;justify-content:space-between;margin-bott
   </div>
 </div>
 
+  <!-- MODAL EDITAR INGRESO -->
+<div class="modal-bg" id="modalIngresoBg">
+  <div class="modal">
+    <h3 id="modalIngresoTitle">Editar</h3>
+    <div class="modal-field"><label>Monto</label><input class="fi" type="number" id="modalIngresoAmt" placeholder="$"></div>
+    <div class="modal-field"><label>Fecha</label><input class="fi" type="date" id="modalIngresoDate"></div>
+    <div class="modal-field" id="modalIngresoExtraFields" style="display:none;">
+      <label>Descripción</label><input class="fi" type="text" id="modalIngresoName" placeholder="Descripción...">
+      <br><br>
+      <label>Bolsillo</label>
+      <select class="fi" id="modalIngresoWallet"><option value="mp">MP</option><option value="ef">EF</option></select>
+    </div>
+    <div class="modal-field" id="modalIngresoTransferFields" style="display:none;">
+      <label>Dirección</label>
+      <select class="fi" id="modalIngresoDir"><option value="mp_to_ef">MP → Efectivo</option><option value="ef_to_mp">Efectivo → MP</option></select>
+    </div>
+    <div class="modal-btns">
+      <button class="modal-btn cancel" onclick="closeModalIngreso()">Cancelar</button>
+      <button class="modal-btn confirm" onclick="confirmEditIngreso()">Guardar</button>
+    </div>
+  </div>
+</div>
+
 <script>
 // ── CONFIG SUPABASE ───────────────────────────────────────────
 const SUPABASE_URL = 'https://larqxmgyutqiktsforgz.supabase.co';

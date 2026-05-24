@@ -817,7 +817,7 @@ function renderAll() {
 
   document.getElementById('transferCount').textContent=d.transferencias.length+' este mes';
   document.getElementById('transferList').innerHTML=d.transferencias.length
-    ? [...d.transferencias].reverse().map(t=>`<div class="si"><div class="si-lbl">${t.dir==='mp_to_ef'?'MP → EF':'EF → MP'}</div><div class="si-amt" style="color:var(--cyan)">${fmt(t.amt)}</div><button class="sdel" onclick="delTransfer(${t.id})">✕</button></div>`).join('')
+    ?[...d.transferencias].reverse().map(t=>`<div class="si"><div class="si-lbl">${t.date?t.date.slice(8,10)+'/'+t.date.slice(5,7):'sin fecha'} ${t.dir==='mp_to_ef'?'MP → EF':'EF → MP'}</div><div class="si-amt" style="color:var(--cyan)">${fmt(t.amt)}</div><button class="sdel" style="color:var(--muted)" onclick="openEditIngreso('transfer',${t.id})">✎</button><button class="sdel" onclick="delTransfer(${t.id})">✕</button></div>`).join(''):`<div class="empty-h">Sin transferencias.</div>`;
     : `<div class="empty-h">Sin transferencias.</div>`;
 
   document.getElementById('sueldoVal').textContent=fmt(d.sueldo);

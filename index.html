@@ -818,21 +818,45 @@ function renderAll() {
   renderComparacion();
 }
 
-function renderCol(col,listId,badgeId,amtCls) {
-  const items=getData(cur)[col];
-  document.getElementById(badgeId).textContent=fmts(items.reduce((a,x)=>a+x.amt,0));
-  const el=document.getElementById(listId);
-  if(!items.length){ el.innerHTML=`<div class="col-empty">Sin gastos. Agregá uno ↓</div>`; return; }
-  const sorted=[...items].sort((a,b)=>(b.date||'').localeCompare(a.date||''));
-  el.innerHTML=sorted.map(i=>`<div class="irow">
-    ${i.date?`<div class="idate">${i.date.slice(5).replace('-','/')}</div>`:''}
-    <div class="icat">${esc(i.cat)}</div>
-    ${i.diego?'<div class="pip">💳 Diego</div>':''}
-    <div class="iamt ${amtCls}">${fmt(i.amt)}</div>
-    <div class="iactions">
-      <button class="iact edit" onclick="openEdit('${col}',${i.id})">✎</button>
-      <button class="iact del"  onclick="delGasto('${col}',${i.id})">✕</button>
-    </div></div>`).join('');
+function renderCol(col, listId, badgeId, amtCls) {
+  const items = getData(cur)[col];
+  const total = items.reduce((a,x)=>a+x.amt,0);
+  document.getElementById(badgeId).textContent = fmts(total);
+  const el = document.getElementById(listId);
+  if (!items.length) {
+    el.innerHTML = `<div class="col-empty">Sin gastos. Agregá uno ↓</div>`;
+    return;
+  }
+  const sorted = [...items].sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+
+  // Agrupar por fecha
+  let lastDate = null;
+  let html = '';
+  sorted.forEach(i => {
+    const date = i.date || '';
+    if (date !== lastDate) {
+      // Separador de día
+      const label = date ? `${date.slice(8,10)}/${date.slice(5,7)}` : 'Sin fecha';
+      const dayTotal = sorted.filter(x=>(x.date||'')=== date).reduce((a,x)=>a+x.amt,0);
+      html += `<div style="display:flex;align-items:center;justify-content:space-between;
+        padding:5px 8px;margin:4px 0 2px;background:var(--s2);border-radius:var(--rsm);">
+        <span style="font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:.05em;">${label}</span>
+        <span style="font-family:var(--mono);font-size:10px;color:var(--muted);">${fmts(dayTotal)}</span>
+      </div>`;
+      lastDate = date;
+    }
+    html += `<div class="irow">
+      ${date ? `<div class="idate">${date.slice(5).replace('-','/')}</div>` : ''}
+      <div class="icat">${esc(i.cat)}</div>
+      ${i.diego ? '<div class="pip">💳 Diego</div>' : ''}
+      <div class="iamt ${amtCls}">${fmt(i.amt)}</div>
+      <div class="iactions">
+        <button class="iact edit" onclick="openEdit('${col}',${i.id})" title="Editar">✎</button>
+        <button class="iact del"  onclick="delGasto('${col}',${i.id})" title="Eliminar">✕</button>
+      </div>
+    </div>`;
+  });
+  el.innerHTML = html;
 }
 
 function renderChart(d) {

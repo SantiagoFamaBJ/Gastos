@@ -322,7 +322,8 @@ header{display:flex;align-items:center;justify-content:space-between;margin-bott
       <div class="big-sub">acumulado del mes</div>
       <div class="slist" id="rendList"></div>
       <div class="frow">
-        <input class="fi" id="rendInput" type="number" placeholder="Rendimiento diario..." onkeydown="if(event.key==='Enter')addRend()">
+        <input class="fi" id="rendInput" type="number" placeholder="Monto...">
+        <input class="fi" id="rendDate" type="date" style="width:118px">
         <button class="fbtn yellow" onclick="addRend()">+</button>
       </div>
     </div>
@@ -337,7 +338,8 @@ header{display:flex;align-items:center;justify-content:space-between;margin-bott
           <div class="dir-btn a-ef" id="dirTo"><div id="dirToLabel">Efectivo</div><div style="font-size:8px;opacity:.6;">destino</div></div>
         </div>
         <div class="frow">
-          <input class="fi" id="transferAmt" type="number" placeholder="Monto..." onkeydown="if(event.key==='Enter')addTransfer()">
+          <input class="fi" id="transferAmt" type="number" placeholder="Monto...">
+          <input class="fi" id="transferDate" type="date" style="width:118px">
           <button class="fbtn cyan" onclick="addTransfer()">+</button>
           <button class="flip-btn" onclick="flipDir()">⇄</button>
         </div>
@@ -353,7 +355,11 @@ header{display:flex;align-items:center;justify-content:space-between;margin-bott
     <div class="ph sueldo"><div class="pt">Sueldo</div></div>
     <div class="pb">
       <div class="big-val bv-green" id="sueldoVal">$0,00</div>
-      <div class="frow"><input class="fi" id="sueldoInput" type="number" placeholder="Ingresar sueldo..." onkeydown="if(event.key==='Enter')setSueldo()"><button class="fbtn green" onclick="setSueldo()">✓</button></div>
+      <div class="frow">
+        <input class="fi" id="sueldoInput" type="number" placeholder="Monto..." onkeydown="if(event.key==='Enter')setSueldo()">
+        <input class="fi" id="sueldoDate" type="date" style="width:118px">
+        <button class="fbtn green" onclick="setSueldo()">✓</button>
+      </div>
     </div>
   </div>
   <div class="panel">
@@ -390,7 +396,8 @@ header{display:flex;align-items:center;justify-content:space-between;margin-bott
       <div class="slist" id="extraList"></div>
       <div class="frow">
         <input class="fi" id="extraName" placeholder="Descripción..." style="flex:1" onkeydown="if(event.key==='Enter')addExtra()">
-        <input class="fi" id="extraAmt" type="number" placeholder="$" style="width:68px" onkeydown="if(event.key==='Enter')addExtra()">
+        <input class="fi" id="extraAmt" type="number" placeholder="$" style="width:68px">
+        <input class="fi" id="extraDate" type="date" style="width:118px">
         <select class="fi" id="extraWallet" style="width:64px;"><option value="mp">MP</option><option value="ef">EF</option></select>
         <button class="fbtn green" onclick="addExtra()">+</button>
       </div>

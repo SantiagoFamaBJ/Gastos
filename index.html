@@ -813,7 +813,7 @@ function renderAll() {
   document.getElementById('rendTotal').textContent=fmt(tRend);
   document.getElementById('rendBadge').textContent=fmts(tRend);
   document.getElementById('rendList').innerHTML=d.rendimientos.length
-    ? [...d.rendimientos].reverse().map(r=>`<div class="si"><div class="si-lbl">rendimiento</div><div class="si-amt" style="color:var(--yellow)">${fmt(r.amt)}</div><button class="sdel" onclick="delRend(${r.id})">✕</button></div>`).join('') : '';
+    ?[...d.rendimientos].reverse().map(r=>`<div class="si"><div class="si-lbl">${r.date?r.date.slice(8,10)+'/'+r.date.slice(5,7):'sin fecha'}</div><div class="si-amt" style="color:var(--yellow)">${fmt(r.amt)}</div><button class="sdel" style="color:var(--muted)" onclick="openEditIngreso('rend',${r.id})">✎</button><button class="sdel" onclick="delRend(${r.id})">✕</button></div>`).join(''):''
 
   document.getElementById('transferCount').textContent=d.transferencias.length+' este mes';
   document.getElementById('transferList').innerHTML=d.transferencias.length

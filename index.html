@@ -853,7 +853,7 @@ function renderCol(col,listId,badgeId,amtCls,saldoActual){
       padding:5px 8px;margin:4px 0 2px;background:var(--s2);border-radius:var(--rsm);">
       <span style="font-family:var(--mono);font-size:10px;color:var(--muted);">${label}</span>
       <span style="font-family:var(--mono);font-size:10px;color:var(--muted);">
-        Saldo: <span style="color:var(--green)">${fmts(saldoEseDia)}</span>
+        Gastado: ${fmts(Math.abs(delDia.filter(m=>m.amt<0).reduce((a,m)=>a+m.amt,0)))} &nbsp;|&nbsp; Saldo: <span style="color:var(--green)">${fmts(saldoEseDia)}</span>
       </span>
     </div>`;
 

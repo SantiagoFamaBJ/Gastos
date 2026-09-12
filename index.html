@@ -941,7 +941,7 @@ function renderCol(col,listId,badgeId,saldoActual){
     });
   }
 
-  movs.sort((a,b)=>b.date.localeCompare(a.date));
+  movs.sort((a,b)=>b.date.localeCompare(a.date)||(a.id||0)-(b.id||0));
 
   if(!movs.length){el.innerHTML=`<div class="col-empty">Sin movimientos. Agregá uno ↓</div>`;return;}
 

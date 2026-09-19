@@ -195,7 +195,7 @@ header{display:flex;align-items:center;justify-content:space-between;margin-bott
 .susc-cur.usd{background:rgba(250,204,21,0.15);color:#facc15;}
 .susc-ars-eq{font-family:var(--mono);font-size:9px;color:var(--muted2);}
 .chart-wrap{position:relative;width:100%;}
-.comp-cat-row{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border);}
+.comp-cat-row{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border);overflow:hidden;}
 .comp-cat-row:last-child{border-bottom:none;}
 .comp-cat-name{font-size:11px;font-weight:500;width:110px;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .comp-bars{flex:1;display:flex;flex-direction:column;gap:3px;}
@@ -1043,7 +1043,7 @@ function renderComparacion(){
     const vCur=tCur[cat]||0,vPrev=tPrev[cat]||0;
     const pCur=Math.round((vCur/maxVal)*100),pPrev=Math.round((vPrev/maxVal)*100);
     const color=catColor(cat),diff=vCur-vPrev;
-    const diffStr=diff===0?'':(diff>0?`<span style="color:var(--red);font-size:9px;font-family:var(--mono);">+${fmts(diff)}</span>`:`<span style="color:var(--green);font-size:9px;font-family:var(--mono);">${fmts(diff)}</span>`);
+    const diffStr=diff===0?'':(diff>0?`<span style="color:var(--red);font-size:9px;font-family:var(--mono);flex-shrink:0;min-width:60px;text-align:right;">+${fmts(diff)}</span>`:`<span style="color:var(--green);font-size:9px;font-family:var(--mono);flex-shrink:0;min-width:60px;text-align:right;">${fmts(diff)}</span>`);
     return `<div class="comp-cat-row"><div class="comp-cat-name">${esc(cat)}</div><div class="comp-bars"><div class="comp-bar-wrap"><div class="comp-bar-bg"><div class="comp-bar-fill" style="width:${pCur}%;background:${color};"></div></div><div class="comp-val" style="color:${color};">${fmts(vCur)}</div></div><div class="comp-bar-wrap"><div class="comp-bar-bg"><div class="comp-bar-fill" style="width:${pPrev}%;background:var(--s4);"></div></div><div class="comp-val" style="color:var(--muted);">${fmts(vPrev)}</div></div></div>${diffStr}</div>`;
   }).join('');
 }

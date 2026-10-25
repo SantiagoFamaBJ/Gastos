@@ -91,6 +91,7 @@ header{display:flex;align-items:center;justify-content:space-between;margin-bott
 .ph.extra{border-top:2px solid var(--green);} .ph.susc{border-top:2px solid var(--muted);}
 .ph.chart{border-top:2px solid var(--purple);} .ph.comp{border-top:2px solid var(--cyan);}
 .ph.catpanel{border-top:2px solid var(--mp);}
+.ph.inv{border-top:2px solid var(--yellow);}
 .pt{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;}
 .ph.mp .pt{color:var(--mp);} .ph.ef .pt{color:var(--ef);}
 .ph.rend .pt{color:var(--yellow);} .ph.transfer .pt{color:var(--cyan);}
@@ -99,6 +100,8 @@ header{display:flex;align-items:center;justify-content:space-between;margin-bott
 .ph.extra .pt{color:var(--green);} .ph.susc .pt{color:var(--muted);}
 .ph.chart .pt{color:var(--purple);} .ph.comp .pt{color:var(--cyan);}
 .ph.catpanel .pt{color:var(--mp);}
+.ph.inv .pt{color:var(--yellow);}
+.ph.inv .pbadge{background:var(--yellow-dim);color:var(--yellow);}
 .pbadge{font-family:var(--mono);font-size:10px;padding:2px 8px;border-radius:20px;font-weight:500;}
 .ph.mp .pbadge{background:var(--mp-dim);color:var(--mp);}
 .ph.ef .pbadge{background:var(--ef-dim);color:var(--ef);}
@@ -452,6 +455,39 @@ header{display:flex;align-items:center;justify-content:space-between;margin-bott
   </div>
 </div>
 </div>
+<div class="row r1">
+  <div class="panel">
+    <div class="ph inv">
+      <div class="pt">💵 Inversión en USD</div>
+      <div class="pbadge" id="invBadge">U$D 0</div>
+    </div>
+    <div class="pb">
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px;">
+        <div style="background:var(--s2);border:1px solid var(--border);border-radius:var(--rsm);padding:10px 12px;">
+          <div style="font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:.07em;text-transform:uppercase;margin-bottom:4px;">USD Acumulado</div>
+          <div class="big-val bv-yellow" style="font-size:18px;margin-bottom:0;" id="invTotalUSD">U$D 0,00</div>
+        </div>
+        <div style="background:var(--s2);border:1px solid var(--border);border-radius:var(--rsm);padding:10px 12px;">
+          <div style="font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:.07em;text-transform:uppercase;margin-bottom:4px;">Valor al Blue hoy</div>
+          <div class="big-val bv-green" style="font-size:18px;margin-bottom:0;" id="invValorBlue">—</div>
+        </div>
+        <div style="background:var(--s2);border:1px solid var(--border);border-radius:var(--rsm);padding:10px 12px;">
+          <div style="font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:.07em;text-transform:uppercase;margin-bottom:4px;">Total Invertido ARS</div>
+          <div class="big-val" style="font-size:18px;margin-bottom:0;color:var(--text);" id="invTotalARS">$0</div>
+        </div>
+      </div>
+      <div class="susc-list" id="invList"></div>
+      <div class="frow" style="max-width:560px;">
+        <input class="fi" id="invDate" type="date" style="width:118px">
+        <input class="fi" id="invARS" type="number" placeholder="ARS invertidos" style="flex:1" oninput="calcUSD()">
+        <input class="fi" id="invPrecio" type="number" placeholder="Precio USD" style="width:110px" oninput="calcUSD()">
+        <input class="fi" id="invUSD" type="number" placeholder="USD (auto)" style="width:100px" readonly style="opacity:.6;">
+        <button class="fbtn yellow" onclick="addInversion()">+</button>
+      </div>
+      <div style="font-family:var(--mono);font-size:9px;color:var(--muted);margin-top:5px;">Ingresá ARS y precio → se calcula el USD automáticamente.</div>
+    </div>
+  </div>
+</div>
 
 <!-- MODAL EDITAR GASTO -->
 <div class="modal-bg" id="modalBg">
@@ -494,8 +530,8 @@ header{display:flex;align-items:center;justify-content:space-between;margin-bott
 const SUPABASE_URL='https://larqxmgyutqiktsforgz.supabase.co';
 const SUPABASE_KEY='sb_publishable_cJvd0rZTogMotT0TuGwbbA_sXh1J8Cc';
 const HEADERS={'Content-Type':'application/json','apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Prefer':'resolution=merge-duplicates,return=representation'};
-const BASE_CATS=['Transporte','Fútbol','Básquet','Boxeo','Gimnasio','Juntadas','Suplementos','Dietética','Depiladora','Kiosco','Chino','Supermercado','Verdulería','Rappi','Uber','Farmacia','Cafetería','Varios','Comida','Salidas','Electrodomésticos'];
-const CAT_COLORS={'Transporte':'#00b1ea','Fútbol':'#1adc8b','Básquet':'#a78bfa','Boxeo':'#ff4757','Gimnasio':'#f59e0b','Juntadas':'#38bdf8','Suplementos':'#fb923c','Dietética':'#34d399','Depiladora':'#f472b6','Kiosco':'#facc15','Chino':'#a3e635','Supermercado':'#60a5fa','Verdulería':'#4ade80','Rappi':'#f97316','Uber':'#818cf8','Farmacia':'#2dd4bf','Cafetería':'#fbbf24','Varios':'#94a3b8','Comida':'#f43f5e','Salidas':'#c084fc','Electrodomésticos':'#22d3ee'};
+const BASE_CATS=['Transporte','Fútbol','Básquet','Boxeo','Gimnasio','Juntadas','Suplementos','Dietética','Depiladora','Kiosco','Chino','Supermercado','Verdulería','Rappi','Uber','Farmacia','Cafetería','Varios','Comida','Salidas','Electrodomésticos','Inversión'];
+const CAT_COLORS={'Transporte':'#00b1ea','Fútbol':'#1adc8b','Básquet':'#a78bfa','Boxeo':'#ff4757','Gimnasio':'#f59e0b','Juntadas':'#38bdf8','Suplementos':'#fb923c','Dietética':'#34d399','Depiladora':'#f472b6','Kiosco':'#facc15','Chino':'#a3e635','Supermercado':'#60a5fa','Verdulería':'#4ade80','Rappi':'#f97316','Uber':'#818cf8','Farmacia':'#2dd4bf','Cafetería':'#fbbf24','Varios':'#94a3b8','Comida':'#f43f5e','Salidas':'#c084fc','Electrodomésticos':'#22d3ee','Inversión':'#f59e0b'};
 const CUSTOM_COLORS=['#fb7185','#a3e635','#67e8f9','#fdba74','#c4b5fd','#86efac','#f9a8d4','#93c5fd'];
 
 let state={},cur=monthKey(new Date()),tDir='mp_to_ef',chart=null,dolarBlue=null,editCtx=null,saveTimer=null,editIngresoCtx=null,customCats=[];
@@ -503,7 +539,7 @@ let state={},cur=monthKey(new Date()),tDir='mp_to_ef',chart=null,dolarBlue=null,
 function monthKey(d){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;}
 function prevMonthKey(k){const[y,m]=k.split('-').map(Number);return monthKey(new Date(y,m-2,1));}
 function getData(k){
-  if(!state[k])state[k]={balMP:0,balEF:0,mp:[],ef:[],sueldo:0,rendimientos:[],transferencias:[],extras:[],suscripciones:[],diegoPagado:false};
+  if(!state[k])state[k]={balMP:0,balEF:0,mp:[],ef:[],sueldo:0,rendimientos:[],transferencias:[],extras:[],suscripciones:[],inversiones:[],diegoPagado:false};
   return state[k];
 }
 function getSueldo(d){
@@ -621,6 +657,7 @@ function initSelects(){
   document.getElementById('transferDate').value=today();
   document.getElementById('sueldoDate').value=today();
   document.getElementById('extraDate').value=today();
+  document.getElementById('invDate').value=today();
 }
 
 function updateDirUI(){
@@ -819,6 +856,58 @@ function addSusc(){
 }
 function delSusc(id){getData(cur).suscripciones=getData(cur).suscripciones.filter(x=>x.id!==id);save();renderAll();}
 
+function calcUSD(){
+  const ars=parseFloat(document.getElementById('invARS').value);
+  const precio=parseFloat(document.getElementById('invPrecio').value);
+  if(ars>0&&precio>0){
+    document.getElementById('invUSD').value=(ars/precio).toFixed(2);
+  } else {
+    document.getElementById('invUSD').value='';
+  }
+}
+function addInversion(){
+  const ars=parseFloat(document.getElementById('invARS').value);
+  const precio=parseFloat(document.getElementById('invPrecio').value);
+  const date=document.getElementById('invDate').value||today();
+  if(!ars||ars<=0||!precio||precio<=0)return;
+  const usd=ars/precio;
+  if(!getData(cur).inversiones)getData(cur).inversiones=[];
+  getData(cur).inversiones.push({id:Date.now(),date,ars,precio,usd});
+  save();renderAll();
+  document.getElementById('invARS').value='';
+  document.getElementById('invPrecio').value='';
+  document.getElementById('invUSD').value='';
+  document.getElementById('invDate').value=today();
+}
+function delInversion(id){
+  if(!getData(cur).inversiones)return;
+  getData(cur).inversiones=getData(cur).inversiones.filter(x=>x.id!==id);
+  save();renderAll();
+}
+function renderInversiones(){
+  const d=getData(cur);
+  const invs=d.inversiones||[];
+  const totalUSD=invs.reduce((a,x)=>a+x.usd,0);
+  const totalARS=invs.reduce((a,x)=>a+x.ars,0);
+  document.getElementById('invBadge').textContent='U$D '+totalUSD.toLocaleString('es-AR',{minimumFractionDigits:2,maximumFractionDigits:2});
+  document.getElementById('invTotalUSD').textContent='U$D '+totalUSD.toLocaleString('es-AR',{minimumFractionDigits:2,maximumFractionDigits:2});
+  document.getElementById('invTotalARS').textContent=fmts(totalARS);
+  if(dolarBlue&&totalUSD>0){
+    document.getElementById('invValorBlue').textContent=fmts(totalUSD*dolarBlue);
+  } else {
+    document.getElementById('invValorBlue').textContent=dolarBlue?fmts(0):'sin cotización';
+  }
+  document.getElementById('invList').innerHTML=invs.length
+    ?[...invs].reverse().map(x=>`<div class="susc-row">
+        <span style="font-family:var(--mono);font-size:10px;color:var(--muted);flex-shrink:0;">${x.date?x.date.slice(8,10)+'/'+x.date.slice(5,7)+'/'+x.date.slice(0,4):'—'}</span>
+        <span class="susc-name" style="font-family:var(--mono);font-size:11px;">U$D ${x.usd.toLocaleString('es-AR',{minimumFractionDigits:2,maximumFractionDigits:2})}</span>
+        <span class="susc-amt">${fmts(x.ars)} ARS</span>
+        <span style="font-family:var(--mono);font-size:9px;color:var(--muted);">@ $${x.precio.toLocaleString('es-AR')}</span>
+        <button class="sdel" onclick="delInversion(${x.id})">✕</button>
+      </div>`).join('')
+    :`<div class="empty-h">Sin compras de USD registradas.</div>`;
+}
+
 function exportPDF(){
   const d=getData(cur),mes=fmtMonth(cur),s=getSueldo(d);
   const tMP=d.mp.reduce((a,x)=>a+x.amt,0),tEF=d.ef.reduce((a,x)=>a+x.amt,0);
@@ -929,6 +1018,7 @@ function renderAll(){
   renderCategoryChips();
   renderChart(d);
   renderComparacion();
+  renderInversiones();
 }
 
 function renderCol(col,listId,badgeId,saldoActual){

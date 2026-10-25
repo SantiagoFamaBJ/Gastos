@@ -454,39 +454,41 @@ header{display:flex;align-items:center;justify-content:space-between;margin-bott
     </div>
   </div>
 </div>
-</div>
 <div class="row r1">
   <div class="panel">
     <div class="ph inv">
       <div class="pt">💵 Inversión en USD</div>
-      <div class="pbadge" id="invBadge">U$D 0</div>
+      <div class="pbadge" id="invBadge">U$D 0,00</div>
     </div>
-    <div class="pb">
-      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px;">
-        <div style="background:var(--s2);border:1px solid var(--border);border-radius:var(--rsm);padding:10px 12px;">
-          <div style="font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:.07em;text-transform:uppercase;margin-bottom:4px;">USD Acumulado</div>
-          <div class="big-val bv-yellow" style="font-size:18px;margin-bottom:0;" id="invTotalUSD">U$D 0,00</div>
+    <div class="pb" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+      <div>
+        <div style="display:flex;gap:12px;margin-bottom:10px;">
+          <div style="flex:1;">
+            <div style="font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:.07em;text-transform:uppercase;margin-bottom:3px;">USD Acumulado</div>
+            <div style="font-family:var(--mono);font-size:20px;font-weight:600;color:var(--yellow);line-height:1;" id="invTotalUSD">U$D 0,00</div>
+          </div>
+          <div style="flex:1;">
+            <div style="font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:.07em;text-transform:uppercase;margin-bottom:3px;">Valor hoy (blue)</div>
+            <div style="font-family:var(--mono);font-size:20px;font-weight:600;color:var(--green);line-height:1;" id="invValorBlue">—</div>
+          </div>
+          <div style="flex:1;">
+            <div style="font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:.07em;text-transform:uppercase;margin-bottom:3px;">Total invertido ARS</div>
+            <div style="font-family:var(--mono);font-size:20px;font-weight:600;color:var(--text);line-height:1;" id="invTotalARS">$0</div>
+          </div>
         </div>
-        <div style="background:var(--s2);border:1px solid var(--border);border-radius:var(--rsm);padding:10px 12px;">
-          <div style="font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:.07em;text-transform:uppercase;margin-bottom:4px;">Valor al Blue hoy</div>
-          <div class="big-val bv-green" style="font-size:18px;margin-bottom:0;" id="invValorBlue">—</div>
+        <div class="frow">
+          <input class="fi" id="invDate" type="date" style="width:118px">
+          <input class="fi" id="invARS" type="number" placeholder="ARS invertidos" style="flex:1" oninput="calcUSD()">
+          <input class="fi" id="invPrecio" type="number" placeholder="Precio USD" style="width:110px" oninput="calcUSD()">
+          <input class="fi" id="invUSD" type="number" placeholder="USD (auto)" style="width:96px" readonly>
+          <button class="fbtn yellow" onclick="addInversion()">+</button>
         </div>
-        <div style="background:var(--s2);border:1px solid var(--border);border-radius:var(--rsm);padding:10px 12px;">
-          <div style="font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:.07em;text-transform:uppercase;margin-bottom:4px;">Total Invertido ARS</div>
-          <div class="big-val" style="font-size:18px;margin-bottom:0;color:var(--text);" id="invTotalARS">$0</div>
-        </div>
+        <div style="font-family:var(--mono);font-size:9px;color:var(--muted);margin-top:5px;">ARS ÷ precio dólar = USD calculado automáticamente</div>
       </div>
-      <div class="susc-list" id="invList"></div>
-      <div class="frow" style="max-width:560px;">
-        <input class="fi" id="invDate" type="date" style="width:118px">
-        <input class="fi" id="invARS" type="number" placeholder="ARS invertidos" style="flex:1" oninput="calcUSD()">
-        <input class="fi" id="invPrecio" type="number" placeholder="Precio USD" style="width:110px" oninput="calcUSD()">
-        <input class="fi" id="invUSD" type="number" placeholder="USD (auto)" style="width:100px" readonly style="opacity:.6;">
-        <button class="fbtn yellow" onclick="addInversion()">+</button>
-      </div>
-      <div style="font-family:var(--mono);font-size:9px;color:var(--muted);margin-top:5px;">Ingresá ARS y precio → se calcula el USD automáticamente.</div>
+      <div class="susc-list" id="invList" style="max-height:200px;"></div>
     </div>
   </div>
+</div>
 </div>
 
 <!-- MODAL EDITAR GASTO -->
